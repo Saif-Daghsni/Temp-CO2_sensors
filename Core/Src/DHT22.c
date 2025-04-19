@@ -6,6 +6,8 @@
 
 #include "DHT22.h"
 
+#include "lcd.h"
+
 extern TIM_HandleTypeDef htim10;           /* extern the timer handler you are using */
 
 uint8_t RH1, RH2, T1, T2, Sum, CheckSum;   /* Variables to store DHT22 data */
@@ -88,7 +90,7 @@ uint8_t DHT22_Get_Reading(float* temp, float* humidity)
     CheckSum = DHT22_Read();       // Check Sum on last 8*4 bits
     Sum = RH1 + RH2 + T1 + T2;     // Actual Sum of RH1,RH2,T1,T2
 
-
+    if(CheckSum == Sum){
     	isReadingCorrect = 1;
 
         if((T1 >> 7) & 1)          // if Temperature Negative
@@ -103,5 +105,6 @@ uint8_t DHT22_Get_Reading(float* temp, float* humidity)
         *humidity = (float)((RH1 << 8) | RH2) / 10;
 
 
+    }
     return isReadingCorrect;
 }

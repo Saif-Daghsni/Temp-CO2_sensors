@@ -106,16 +106,43 @@ int main(void)
 
           HAL_Delay(1000);
           Lcd_clear(&lcd);
-          Lcd_string(&lcd, "ADC Test Ready");
-          HAL_Delay(1000);
+          Lcd_string(&lcd, "Test Ready");
+          HAL_Delay(3000);
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
 	  char buffer[16];
+	  uint8_t retries = 3;
+	      while (retries-- > 0)
+	      {
+	          status = DHT22_Get_Reading(&Tempurature, &Humidity);
+	          if (status == 1) break;
+	          HAL_Delay(100);
+	      }
 
-	  status = DHT22_Get_Reading(&Tempurature, &Humidity);
+	      if (status == 1)
+	      {
+	    	  Lcd_clear(&lcd); // Clear the screen before displaying new values
+
+	    	  	      snprintf(buffer, sizeof(buffer), "Temp: %.1fC", Tempurature);
+	    	  	      Lcd_cursor(&lcd, 0, 0); // Line 1, position 0
+	    	  	      Lcd_string(&lcd, buffer);
+
+	    	  	      snprintf(buffer, sizeof(buffer), "Humi: %.1f%%", Humidity);
+	    	  	      Lcd_cursor(&lcd, 1, 0); // Line 2, position 0
+	    	  	      Lcd_string(&lcd, buffer);
+	      }
+	      else
+	      {
+
+		      Lcd_clear(&lcd);
+		      Lcd_cursor(&lcd, 0, 0);
+		      Lcd_string(&lcd, "Sensor Error");
+	      }
+	      HAL_Delay(2500);
+	  /*status = DHT22_Get_Reading(&Tempurature, &Humidity);
 
 	  if (status == 1) // Assuming 1 = OK, check based on your DHT22 library
 	  {
@@ -136,7 +163,7 @@ int main(void)
 	      Lcd_string(&lcd, "Sensor Error");
 	  }
 
-	  HAL_Delay(2500);
+	  HAL_Delay(2500);*/
 
     /* USER CODE BEGIN 3 */
   }
@@ -200,7 +227,7 @@ static void MX_TIM10_Init(void)
 
   /* USER CODE END TIM10_Init 1 */
   htim10.Instance = TIM10;
-  htim10.Init.Prescaler = 0;
+  htim10.Init.Prescaler = 16;
   htim10.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim10.Init.Period = 65535;
   htim10.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
