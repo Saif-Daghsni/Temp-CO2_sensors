@@ -1,5 +1,5 @@
 /* USER CODE BEGIN Header */
-/** the first try
+/** the temp tensor
   ******************************************************************************
   * @file           : main.c
   * @brief          : Main program body
